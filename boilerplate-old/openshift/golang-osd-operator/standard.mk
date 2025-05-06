@@ -102,11 +102,10 @@ GOFLAGS_MOD ?=
 # as $HOME is set to "/" by default.
 ifeq ($(HOME),/)
 export HOME=/tmp/home
-GOENV+=GOCACHE="${HOME}/.cache"
 endif
 PWD=$(shell pwd)
 
-GOENV+=GOOS=${GOOS} GOARCH=${GOARCH} CGO_ENABLED=1 GOFLAGS="${GOFLAGS_MOD}"
+GOENV=GOOS=${GOOS} GOARCH=${GOARCH} CGO_ENABLED=1 GOFLAGS="${GOFLAGS_MOD}"
 GOBUILDFLAGS=-gcflags="all=-trimpath=${GOPATH}" -asmflags="all=-trimpath=${GOPATH}"
 
 ifeq (${FIPS_ENABLED}, true)
@@ -126,12 +125,6 @@ GOLANGCI_OPTIONAL_CONFIG ?=
 ifeq ($(origin TESTTARGETS), undefined)
 TESTTARGETS := $(shell ${GOENV} go list -e ./... | grep -E -v "/(vendor)/" | grep -E -v "/(test/e2e)/")
 endif
-
-# If for any reason we've made it this far and TESTTARGETS is still empty, fail early.
-ifeq ($(TESTTARGETS),)
-$(error TESTTARGETS is empty)
-endif
-
 # ex, -v
 TESTOPTS :=
 
